@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <signal.h>
-#include "xarm_api/xarm_driver.h"
+#include<unistd.h>
+#include "uarm.h"
+// #include "xarm_api/xarm_driver.h"
 // #include "xarm_planner/xarm_planner.h"
 
 void exit_sig_handler(int signum)
@@ -26,36 +28,86 @@ int main(int argc, char **argv)
     }
 
     RCLCPP_INFO(node->get_logger(), "xarm_driver_node start");
-    xarm_api::XArmDriver xarm_driver;
-    xarm_driver.init(node, robot_ip);
-
-    xarm_driver.arm->motion_enable(1, 8);
-
-    xarm_driver.arm->set_state(XARM_STATE::STOP);
-    xarm_driver.arm->set_mode(0);
-    sleep_milliseconds(10);
-    xarm_driver.arm->set_state(0);
     
-    
-    float vel = 400;
-    float acc = 50;
-    int del = 100;
+    Uarm uarm(node, robot_ip);
+    rclcpp::Time t = node->now();
+    double seconds = t.seconds();
+
+    std::cout << seconds/1000000000 << " sec" << std::endl;
+
+    // rclcpp::rate::RateBase::sleep() = node.create_timer(1);
+
+    uarm.stop_gripper();
+
+    // Pickup box from ground
+    uarm.set_pos_home();
+    uarm.set_pos_lookout();
+    uarm.open_gripper();
+    uarm.set_pos_pickup();
+    uarm.close_gripper();
+    uarm.close_gripper();
+
+    // Move box to robot platform
+    uarm.set_pos_lookout();
+    uarm.set_pos_front_left();
+    uarm.set_pos_back_left();
+    uarm.set_pos_back();
+
+    // Unload box
+    uarm.set_pos_unload();
+    uarm.open_gripper();
+    uarm.open_gripper();
+    uarm.set_pos_back();
+    // uarm.stop_gripper();
+
+    // Pick box back up
+    uarm.set_pos_unload();
+    uarm.close_gripper();
+    uarm.close_gripper();
+    uarm.close_gripper();
+    uarm.close_gripper();
+
+    uarm.set_pos_back();
+
+    // Move box back to ground
+    uarm.set_pos_back_left();
+    uarm.set_pos_front_left();
+    uarm.set_pos_lookout();
+    uarm.set_pos_pickup();
+    uarm.open_gripper();
+
+    // Go home and stop gripper
+    uarm.set_pos_lookout();
+    uarm.stop_gripper();
+    uarm.set_pos_home();
+
+
+    // float vel = 400;
+    // float acc = 50;
+    // int del = 100;
 
     // Home
     // float pose[] = {100, 0, 300, 3.14, 0, 0};
     // xarm_driver.arm->set_position_aa(pose, -1, vel, acc, 0, false, -1, false, 0);
-    float pose[] = {270, 0, 60, 3.14, 0, 0};
-    xarm_driver.arm->set_position_aa(pose, -1, vel, acc, 0, false, -1, false, 0);
+
+    // xarm_driver.arm->open_lite6_gripper();
+    // sleep_milliseconds(1000);
+    // xarm_driver.arm->close_lite6_gripper();
+    // sleep_milliseconds(1000);
+    // xarm_driver.arm->stop_lite6_gripper();
+
+    // float pose[] = {270, 0, 60, 3.14, 0, 0};
+    // xarm_driver.arm->set_position_aa(pose, -1, vel, acc, 0, false, -1, false, 0);
     
-    // Get current angles of all joints
-    float get_angles[7];
-    xarm_driver.arm->get_servo_angle(&get_angles[0]);
+    // // Get current angles of all joints
+    // float get_angles[7];
+    // xarm_driver.arm->get_servo_angle(&get_angles[0]);
 
     // std::cout << get_angles[0] << " " << get_angles[1] << " " << get_angles[2] << " " << get_angles[3] << " " << get_angles[4] << " " << get_angles[5] << " " << get_angles[6] << " " << std::endl;
 
     // Insert current angles to all joints except end effector
-    float angles[7] = {get_angles[0], get_angles[1], get_angles[2], get_angles[3], get_angles[4], 1, get_angles[5]};
-    xarm_driver.arm->set_servo_angle(angles, vel, 1, 10, 0);
+    // float angles[7] = {get_angles[0], get_angles[1], get_angles[2], get_angles[3], get_angles[4], 1, get_angles[5]};
+    // xarm_driver.arm->set_servo_angle(angles, vel, 1, 10, 0);
     // float pose[] = {-350, 0, 300, 3.14, 0, 0};
     // xarm_driver.arm->set_position_aa(pose, -1, vel, acc, 0, false, -1, false, 0);
     // float pose2[] = {-250, -250, 300, 3.14, 0, 0};

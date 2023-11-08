@@ -25,7 +25,7 @@ find_package(moveit_msgs REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(uarm_control src/uarm_control.cpp)
+add_executable(uarm_control src/uarm_control.cpp src/uarm.cpp)
 ament_target_dependencies(uarm_control
                           rclcpp
                           rclcpp_action
@@ -56,5 +56,12 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+# install the launch directory
+install(DIRECTORY
+		include
+		DESTINATION share/${PROJECT_NAME}/
+)
+
 
 ament_package()
