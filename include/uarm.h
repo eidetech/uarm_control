@@ -31,6 +31,11 @@ public:
     // Unload pos
     void set_pos_unload();
 
+    // Rotate commands
+    void rotate_pos_90();
+    void rotate_neg_90();
+    void rotate_0();
+
     // Gripper commands
     void open_gripper();
     void close_gripper();
@@ -38,9 +43,13 @@ public:
 
 private:
     xarm_api::XArmDriver xarm_driver;
-    int _vel = 400;
-    int _acc = 50;
-    int _platform_load_height = 160;
-    int _floor_load_height = -50;
+    float _vel = 1000;
+    float _acc = 150;
+
+    float _vel_rotate = 10;
+    float _acc_rotate = 1;
+
+    float _platform_load_height = 165;
+    float _floor_load_height = -50;
 };
 

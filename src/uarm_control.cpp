@@ -30,10 +30,10 @@ int main(int argc, char **argv)
     RCLCPP_INFO(node->get_logger(), "xarm_driver_node start");
     
     Uarm uarm(node, robot_ip);
-    rclcpp::Time t = node->now();
-    double seconds = t.seconds();
+    // rclcpp::Time t = node->now();
+    // double seconds = t.seconds();
 
-    std::cout << seconds/1000000000 << " sec" << std::endl;
+    // std::cout << seconds/1000000000 << " sec" << std::endl;
 
     // rclcpp::rate::RateBase::sleep() = node.create_timer(1);
 
@@ -42,44 +42,52 @@ int main(int argc, char **argv)
     // Pickup box from ground
     uarm.set_pos_home();
     uarm.set_pos_lookout();
+
     uarm.open_gripper();
+    uarm.rotate_neg_90();
     uarm.set_pos_pickup();
     uarm.close_gripper();
     uarm.close_gripper();
+    uarm.rotate_0();
 
-    // Move box to robot platform
-    uarm.set_pos_lookout();
-    uarm.set_pos_front_left();
-    uarm.set_pos_back_left();
-    uarm.set_pos_back();
+    // // Move box to robot platform
+    // uarm.set_pos_lookout();
 
-    // Unload box
-    uarm.set_pos_unload();
-    uarm.open_gripper();
-    uarm.open_gripper();
-    uarm.set_pos_back();
+    // uarm.set_pos_front_left();
+    // uarm.set_pos_back_left();
+    // uarm.set_pos_back();
+
+    // // Unload box
+    // // uarm.rotate_pos_90();
+    // uarm.set_pos_unload();
+    // uarm.open_gripper();
+    // uarm.open_gripper();
+    // uarm.set_pos_back();
+    // // uarm.rotate_0();
+    // // uarm.stop_gripper();
+
+    // // Pick box back up
+    // uarm.set_pos_unload();
+    // uarm.close_gripper();
+    // uarm.close_gripper();
+    // uarm.close_gripper();
+    // uarm.close_gripper();
+
+    // uarm.set_pos_back();
+
+    // // Move box back to ground
+    // uarm.set_pos_back_left();
+    // uarm.set_pos_front_left();
+    // uarm.set_pos_lookout();
+    // uarm.set_pos_home();
+
+    // uarm.set_pos_pickup();
+    // uarm.open_gripper();
+
+    // // Go home and stop gripper
+    // uarm.set_pos_lookout();
     // uarm.stop_gripper();
-
-    // Pick box back up
-    uarm.set_pos_unload();
-    uarm.close_gripper();
-    uarm.close_gripper();
-    uarm.close_gripper();
-    uarm.close_gripper();
-
-    uarm.set_pos_back();
-
-    // Move box back to ground
-    uarm.set_pos_back_left();
-    uarm.set_pos_front_left();
-    uarm.set_pos_lookout();
-    uarm.set_pos_pickup();
-    uarm.open_gripper();
-
-    // Go home and stop gripper
-    uarm.set_pos_lookout();
-    uarm.stop_gripper();
-    uarm.set_pos_home();
+    // uarm.set_pos_home();
 
 
     // float vel = 400;
